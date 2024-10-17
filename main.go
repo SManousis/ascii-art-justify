@@ -24,7 +24,9 @@ func main() {
 	hasOutput := false
 
 	if len(os.Args) > 2 {
+		// If exactly three arguments are provided
 		if len(os.Args) == 3 {
+			// Check if the first argument does not start with "--" (not an option)
 			if !strings.HasPrefix(os.Args[1], "--") {
 				text = os.Args[1]
 				banner = strings.ToLower(os.Args[2])
@@ -37,14 +39,16 @@ func main() {
 			text = os.Args[2]
 			banner = strings.ToLower(os.Args[3])
 		}
+
+		// Check if an option was provided
 		if option != "" {
 			if strings.HasPrefix(option, "--output=") && strings.HasSuffix(option, ".txt") {
 				hasOutput = true
-				outputfile = option[9:]
+				outputfile = option[9:] // Extract the filename from the option (after "--output=")
 			} else if strings.HasPrefix(option, "--align=") {
 				hasAlign = true
-				alignment = strings.ToLower(option[8:])
-			} else {
+				alignment = strings.ToLower(option[8:]) // Extract the alignment value and convert it to lowercase
+			} else { // If the option doesn't match expected patterns
 				fmt.Println("ERROR! Usage: go run . [OPTION] [STRING] [BANNER] \nEX: go run . --output=<fileName.txt> \"something\" standard")
 				return
 			}
