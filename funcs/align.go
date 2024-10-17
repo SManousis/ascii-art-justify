@@ -86,13 +86,14 @@ func PrintAsciiArtWithAlign(align string, width int, sentences []string, textFil
 				}
 				continue
 			}
+			count := 0
+			for _, ch := range word {
+				if ch == ' ' {
+					count++
+				}
+			}
 			for h := 1; h < 9; h++ {
-
 				for j := 0; j < len(word); j++ {
-					count := 0
-					if word[j] == ' ' {
-						count++
-					}
 					if count == 0 || width == length[i] {
 						for lineIndex, line := range textFile {
 							if lineIndex == (int(word[j])-32)*9+h {

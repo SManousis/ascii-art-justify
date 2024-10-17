@@ -77,6 +77,26 @@ func TestMainWithVariousStrings(t *testing.T) {
 			name: "Test with output file option",
 			args: []string{"cmd", "--output=exampletest.txt", "Hello\"skoul(i)kom@p$", "standard"},
 		},
+		{
+			name: "Test aligning left with word 'Align this left !'",
+			args: []string{"cmd", "--align=left", "Align this left !"},
+		},
+		{
+			name: "Test aligning right with word 'Align this right !'",
+			args: []string{"cmd", "--align=right", "Align this right !"},
+		},
+		{
+			name: "Test aligning with wrong align argument with word 'Align this !'",
+			args: []string{"cmd", "--align=erroneous", "Align this !"},
+		},
+		{
+			name: "Test aligning center with word 'Align this center !'",
+			args: []string{"cmd", "--align=center", "Align this center !"},
+		},
+		{
+			name: "Test aligning justified with word 'Align this !'",
+			args: []string{"cmd", "--align=justify", "Align this !"},
+		},
 	}
 
 	for _, tt := range tests {

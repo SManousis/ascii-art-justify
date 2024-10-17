@@ -1,4 +1,4 @@
-ASCII-ART v1.3
+ASCII-ART v1.3.1
 
 FUNCTIONALITY
 -This is a program that receives:
@@ -26,3 +26,4 @@ CHANGELOG
 -v1.2 - Added the ability to print the output into a file
 -v1.2.1 - Added banners and funcs folders
 -v1.3 - Added align functionality
+-v1.3.1 - Fixed align(justify) functionality

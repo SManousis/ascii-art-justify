@@ -11,7 +11,7 @@ import (
 func main() {
 	// Check if the number of command-line arguments is correct
 	if len(os.Args) < 2 || len(os.Args) > 4 {
-		fmt.Println("Usage: go run . [OPTION] [STRING] [BANNER] || EX: go run . --align=right something standard")
+		fmt.Println("ERROR! Usage: go run . [OPTION] [STRING] [BANNER] \nEX: go run . --output=<fileName.txt> \"something\" standard")
 		return
 	}
 
@@ -19,39 +19,37 @@ func main() {
 	var option string
 	banner := "standard"
 	var alignment string
+	var outputfile string
 	hasAlign := false
+	hasOutput := false
 
-	if len(os.Args) == 4 {
-		option = os.Args[1]
-		text = os.Args[2]
-		banner = strings.ToLower(os.Args[3])
-		hasAlign = true
-
-		if !strings.HasPrefix(option, "--align") || !strings.HasSuffix(option, ".txt") {
-			fmt.Println("Usage: go run . [OPTION] [STRING] [BANNER] || EX: go run . --align=right something standard")
-			return
-		}
-
-		alignment = option[8:]
-	}
-
-	if len(os.Args) == 3 {
-		if strings.HasPrefix(option, "--output=") && strings.HasSuffix(option, ".txt") {
+	if len(os.Args) > 2 {
+		if len(os.Args) == 3 {
+			if !strings.HasPrefix(os.Args[1], "--") {
+				text = os.Args[1]
+				banner = strings.ToLower(os.Args[2])
+			} else {
+				option = os.Args[1]
+				text = os.Args[2]
+			}
+		} else {
 			option = os.Args[1]
 			text = os.Args[2]
-			hasAlign = true
-		} else if strings.HasPrefix(option, "--align=") && !strings.HasSuffix(option, ".txt") {
-
-			fmt.Println("Usage: go run . [OPTION] [STRING] [BANNER] || EX: go run . --align=right something standard")
-			return
-		} else {
-
-			text = os.Args[1]
-			banner = strings.ToLower(os.Args[2])
+			banner = strings.ToLower(os.Args[3])
 		}
-	}
-
-	if len(os.Args) == 2 {
+		if option != "" {
+			if strings.HasPrefix(option, "--output=") && strings.HasSuffix(option, ".txt") {
+				hasOutput = true
+				outputfile = option[9:]
+			} else if strings.HasPrefix(option, "--align=") {
+				hasAlign = true
+				alignment = strings.ToLower(option[8:])
+			} else {
+				fmt.Println("ERROR! Usage: go run . [OPTION] [STRING] [BANNER] \nEX: go run . --output=<fileName.txt> \"something\" standard")
+				return
+			}
+		}
+	} else {
 		text = os.Args[1]
 	}
 
@@ -72,24 +70,31 @@ func main() {
 	// Split the banner file content into lines
 	lines := strings.Split(str, "\n")
 
-	if !hasAlign {
+	if option == "" {
 		// If no output file specified, print the ASCII art to the console
 		funcs.PrintAsciiArt(sepText, lines)
-	}
-	if hasAlign {
-		alignment = strings.ToLower(option[8:])
+	} else if hasAlign {
 		width, _, _ := funcs.TerminalSize()
 		if alignment == "" {
-			fmt.Println("Usage: go run . [OPTION] [STRING] [BANNER] || EX: go run . --align=right something standard")
+			fmt.Println("ERROR! Usage: go run . [OPTION] [STRING] [BANNER] \nEX: go run . --output=<fileName.txt> \"something\" standard")
 			return
 		} else {
 			switch alignment {
 			case "left", "right", "center", "justify":
 			default:
-				fmt.Println("Usage: go run . [OPTION] [STRING] [BANNER] || EX: go run . --align=right something standard")
+				fmt.Println("ERROR! Acceptable alignments are: left, right, center, justify")
 				return
 			}
 		}
 		funcs.PrintAsciiArtWithAlign(alignment, width, sepText, lines)
+	} else if hasOutput {
+		// If output file is specified, create or overwrite the file
+		file, err := os.Create(outputfile)
+		if err != nil {
+			fmt.Println("ERROR!", err)
+			return
+		}
+		// Generate the ASCII art and write it to the file
+		funcs.PrintAsciiArtToFile(file, sepText, lines)
 	}
 }
